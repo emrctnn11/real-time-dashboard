@@ -1,0 +1,8 @@
+<h2>Real Time Data</h2>
+
+<ul>
+  @for (data of realTimeData(); track data) {
+
+  <li>{{ data.time }} - Value: {{ data.value.toFixed(2) }}</li>
+  }
+</ul>
