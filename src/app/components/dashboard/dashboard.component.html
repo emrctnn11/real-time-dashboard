@@ -1,8 +1,18 @@
-<h2>Real Time Data</h2>
+<h2>📊 Real-Time Data Chart</h2>
+<div class="chart-container">
+  <canvas
+    baseChart
+    [datasets]="lineChartData.datasets"
+    [labels]="lineChartData.labels"
+    [options]="lineChartOptions"
+    chartType="line"
+  >
+  </canvas>
+</div>
 
+<h2>📡 Real-Time Data Stream</h2>
 <ul>
   @for (data of realTimeData(); track data) {
-
-  <li>{{ data.time }} - Value: {{ data.value.toFixed(2) }}</li>
+  <li>🕒 {{ data.time }} - 📊 Value: {{ data.value.toFixed(2) }}</li>
   }
 </ul>
