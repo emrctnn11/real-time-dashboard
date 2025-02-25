@@ -1,0 +1,29 @@
+<div class="chart-container">
+  <canvas
+    baseChart
+    [datasets]="lineChartData.datasets"
+    [labels]="lineChartData.labels"
+    [options]="lineChartOptions"
+    chartType="line"
+  >
+  </canvas>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Select Cryptocurrency</mat-label>
+    <mat-select
+      [(value)]="selectedCrypto"
+      (selectionChange)="onCryptoChange($event.value)"
+    >
+      <mat-option *ngFor="let crypto of availableCryptos" [value]="crypto">
+        {{ crypto }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<h2>📡 Real-Time Data Stream</h2>
+<ul>
+  @for (data of realTimeData(); track data) {
+  <li>🕒 {{ data.time }} - 📊 Value: {{ data.value.toFixed(2) }}</li>
+  }
+</ul>

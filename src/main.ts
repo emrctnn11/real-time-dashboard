@@ -1,6 +1,18 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
+import { provideHttpClient } from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core';
+import { NgChartsModule } from 'ng2-charts';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideHttpClient(),
+    provideAnimations(),
+    importProvidersFrom(NgChartsModule),
+    importProvidersFrom(MatSelectModule),
+    importProvidersFrom(MatFormFieldModule),
+  ],
+}).catch((err) => console.error(err));
