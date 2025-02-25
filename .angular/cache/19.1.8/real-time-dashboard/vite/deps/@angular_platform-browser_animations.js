@@ -1,16 +1,33 @@
 import {
+  BrowserModule,
+  DomRendererFactory2
+} from "./chunk-O3D5GHXF.js";
+import "./chunk-JZYHKTS5.js";
+import {
+  AUTO_STYLE,
+  AnimationGroupPlayer,
+  AnimationMetadataType,
+  NoopAnimationPlayer,
+  sequence,
+  style,
+  ɵPRE_STYLE
+} from "./chunk-UUYCNUGP.js";
+import {
   DOCUMENT
 } from "./chunk-TSXVMPA3.js";
 import {
   ANIMATION_MODULE_TYPE,
   Inject,
   Injectable,
+  NgModule,
+  NgZone,
   RendererFactory2,
   RuntimeError,
-  ViewEncapsulation,
-  inject,
+  performanceMarkFeature,
   setClassMetadata,
   ɵɵdefineInjectable,
+  ɵɵdefineInjector,
+  ɵɵdefineNgModule,
   ɵɵinject
 } from "./chunk-NRCWHQ3W.js";
 import "./chunk-ZSY7TSMJ.js";
@@ -18,424 +35,6 @@ import {
   __objRest,
   __spreadValues
 } from "./chunk-WDMUDEB6.js";
-
-// node_modules/@angular/animations/fesm2022/animations.mjs
-var AnimationMetadataType;
-(function(AnimationMetadataType2) {
-  AnimationMetadataType2[AnimationMetadataType2["State"] = 0] = "State";
-  AnimationMetadataType2[AnimationMetadataType2["Transition"] = 1] = "Transition";
-  AnimationMetadataType2[AnimationMetadataType2["Sequence"] = 2] = "Sequence";
-  AnimationMetadataType2[AnimationMetadataType2["Group"] = 3] = "Group";
-  AnimationMetadataType2[AnimationMetadataType2["Animate"] = 4] = "Animate";
-  AnimationMetadataType2[AnimationMetadataType2["Keyframes"] = 5] = "Keyframes";
-  AnimationMetadataType2[AnimationMetadataType2["Style"] = 6] = "Style";
-  AnimationMetadataType2[AnimationMetadataType2["Trigger"] = 7] = "Trigger";
-  AnimationMetadataType2[AnimationMetadataType2["Reference"] = 8] = "Reference";
-  AnimationMetadataType2[AnimationMetadataType2["AnimateChild"] = 9] = "AnimateChild";
-  AnimationMetadataType2[AnimationMetadataType2["AnimateRef"] = 10] = "AnimateRef";
-  AnimationMetadataType2[AnimationMetadataType2["Query"] = 11] = "Query";
-  AnimationMetadataType2[AnimationMetadataType2["Stagger"] = 12] = "Stagger";
-})(AnimationMetadataType || (AnimationMetadataType = {}));
-var AUTO_STYLE = "*";
-function sequence(steps, options = null) {
-  return {
-    type: AnimationMetadataType.Sequence,
-    steps,
-    options
-  };
-}
-function style(tokens) {
-  return {
-    type: AnimationMetadataType.Style,
-    styles: tokens,
-    offset: null
-  };
-}
-var AnimationBuilder = class _AnimationBuilder {
-  static ɵfac = function AnimationBuilder_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AnimationBuilder)();
-  };
-  static ɵprov = ɵɵdefineInjectable({
-    token: _AnimationBuilder,
-    factory: () => (() => inject(BrowserAnimationBuilder))(),
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AnimationBuilder, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root",
-      useFactory: () => inject(BrowserAnimationBuilder)
-    }]
-  }], null, null);
-})();
-var AnimationFactory = class {
-};
-var BrowserAnimationBuilder = class _BrowserAnimationBuilder extends AnimationBuilder {
-  animationModuleType = inject(ANIMATION_MODULE_TYPE, {
-    optional: true
-  });
-  _nextAnimationId = 0;
-  _renderer;
-  constructor(rootRenderer, doc) {
-    super();
-    const typeData = {
-      id: "0",
-      encapsulation: ViewEncapsulation.None,
-      styles: [],
-      data: {
-        animation: []
-      }
-    };
-    this._renderer = rootRenderer.createRenderer(doc.body, typeData);
-    if (this.animationModuleType === null && !isAnimationRenderer(this._renderer)) {
-      throw new RuntimeError(3600, (typeof ngDevMode === "undefined" || ngDevMode) && "Angular detected that the `AnimationBuilder` was injected, but animation support was not enabled. Please make sure that you enable animations in your application by calling `provideAnimations()` or `provideAnimationsAsync()` function.");
-    }
-  }
-  build(animation) {
-    const id = this._nextAnimationId;
-    this._nextAnimationId++;
-    const entry = Array.isArray(animation) ? sequence(animation) : animation;
-    issueAnimationCommand(this._renderer, null, id, "register", [entry]);
-    return new BrowserAnimationFactory(id, this._renderer);
-  }
-  static ɵfac = function BrowserAnimationBuilder_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _BrowserAnimationBuilder)(ɵɵinject(RendererFactory2), ɵɵinject(DOCUMENT));
-  };
-  static ɵprov = ɵɵdefineInjectable({
-    token: _BrowserAnimationBuilder,
-    factory: _BrowserAnimationBuilder.ɵfac,
-    providedIn: "root"
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(BrowserAnimationBuilder, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [{
-    type: RendererFactory2
-  }, {
-    type: Document,
-    decorators: [{
-      type: Inject,
-      args: [DOCUMENT]
-    }]
-  }], null);
-})();
-var BrowserAnimationFactory = class extends AnimationFactory {
-  _id;
-  _renderer;
-  constructor(_id, _renderer) {
-    super();
-    this._id = _id;
-    this._renderer = _renderer;
-  }
-  create(element, options) {
-    return new RendererAnimationPlayer(this._id, element, options || {}, this._renderer);
-  }
-};
-var RendererAnimationPlayer = class {
-  id;
-  element;
-  _renderer;
-  parentPlayer = null;
-  _started = false;
-  constructor(id, element, options, _renderer) {
-    this.id = id;
-    this.element = element;
-    this._renderer = _renderer;
-    this._command("create", options);
-  }
-  _listen(eventName, callback) {
-    return this._renderer.listen(this.element, `@@${this.id}:${eventName}`, callback);
-  }
-  _command(command, ...args) {
-    issueAnimationCommand(this._renderer, this.element, this.id, command, args);
-  }
-  onDone(fn) {
-    this._listen("done", fn);
-  }
-  onStart(fn) {
-    this._listen("start", fn);
-  }
-  onDestroy(fn) {
-    this._listen("destroy", fn);
-  }
-  init() {
-    this._command("init");
-  }
-  hasStarted() {
-    return this._started;
-  }
-  play() {
-    this._command("play");
-    this._started = true;
-  }
-  pause() {
-    this._command("pause");
-  }
-  restart() {
-    this._command("restart");
-  }
-  finish() {
-    this._command("finish");
-  }
-  destroy() {
-    this._command("destroy");
-  }
-  reset() {
-    this._command("reset");
-    this._started = false;
-  }
-  setPosition(p) {
-    this._command("setPosition", p);
-  }
-  getPosition() {
-    return unwrapAnimationRenderer(this._renderer)?.engine?.players[this.id]?.getPosition() ?? 0;
-  }
-  totalTime = 0;
-};
-function issueAnimationCommand(renderer, element, id, command, args) {
-  renderer.setProperty(element, `@@${id}:${command}`, args);
-}
-function unwrapAnimationRenderer(renderer) {
-  const type = renderer.ɵtype;
-  if (type === 0) {
-    return renderer;
-  } else if (type === 1) {
-    return renderer.animationRenderer;
-  }
-  return null;
-}
-function isAnimationRenderer(renderer) {
-  const type = renderer.ɵtype;
-  return type === 0 || type === 1;
-}
-var NoopAnimationPlayer = class {
-  _onDoneFns = [];
-  _onStartFns = [];
-  _onDestroyFns = [];
-  _originalOnDoneFns = [];
-  _originalOnStartFns = [];
-  _started = false;
-  _destroyed = false;
-  _finished = false;
-  _position = 0;
-  parentPlayer = null;
-  totalTime;
-  constructor(duration = 0, delay = 0) {
-    this.totalTime = duration + delay;
-  }
-  _onFinish() {
-    if (!this._finished) {
-      this._finished = true;
-      this._onDoneFns.forEach((fn) => fn());
-      this._onDoneFns = [];
-    }
-  }
-  onStart(fn) {
-    this._originalOnStartFns.push(fn);
-    this._onStartFns.push(fn);
-  }
-  onDone(fn) {
-    this._originalOnDoneFns.push(fn);
-    this._onDoneFns.push(fn);
-  }
-  onDestroy(fn) {
-    this._onDestroyFns.push(fn);
-  }
-  hasStarted() {
-    return this._started;
-  }
-  init() {
-  }
-  play() {
-    if (!this.hasStarted()) {
-      this._onStart();
-      this.triggerMicrotask();
-    }
-    this._started = true;
-  }
-  /** @internal */
-  triggerMicrotask() {
-    queueMicrotask(() => this._onFinish());
-  }
-  _onStart() {
-    this._onStartFns.forEach((fn) => fn());
-    this._onStartFns = [];
-  }
-  pause() {
-  }
-  restart() {
-  }
-  finish() {
-    this._onFinish();
-  }
-  destroy() {
-    if (!this._destroyed) {
-      this._destroyed = true;
-      if (!this.hasStarted()) {
-        this._onStart();
-      }
-      this.finish();
-      this._onDestroyFns.forEach((fn) => fn());
-      this._onDestroyFns = [];
-    }
-  }
-  reset() {
-    this._started = false;
-    this._finished = false;
-    this._onStartFns = this._originalOnStartFns;
-    this._onDoneFns = this._originalOnDoneFns;
-  }
-  setPosition(position) {
-    this._position = this.totalTime ? position * this.totalTime : 1;
-  }
-  getPosition() {
-    return this.totalTime ? this._position / this.totalTime : 1;
-  }
-  /** @internal */
-  triggerCallback(phaseName) {
-    const methods = phaseName == "start" ? this._onStartFns : this._onDoneFns;
-    methods.forEach((fn) => fn());
-    methods.length = 0;
-  }
-};
-var AnimationGroupPlayer = class {
-  _onDoneFns = [];
-  _onStartFns = [];
-  _finished = false;
-  _started = false;
-  _destroyed = false;
-  _onDestroyFns = [];
-  parentPlayer = null;
-  totalTime = 0;
-  players;
-  constructor(_players) {
-    this.players = _players;
-    let doneCount = 0;
-    let destroyCount = 0;
-    let startCount = 0;
-    const total = this.players.length;
-    if (total == 0) {
-      queueMicrotask(() => this._onFinish());
-    } else {
-      this.players.forEach((player) => {
-        player.onDone(() => {
-          if (++doneCount == total) {
-            this._onFinish();
-          }
-        });
-        player.onDestroy(() => {
-          if (++destroyCount == total) {
-            this._onDestroy();
-          }
-        });
-        player.onStart(() => {
-          if (++startCount == total) {
-            this._onStart();
-          }
-        });
-      });
-    }
-    this.totalTime = this.players.reduce((time, player) => Math.max(time, player.totalTime), 0);
-  }
-  _onFinish() {
-    if (!this._finished) {
-      this._finished = true;
-      this._onDoneFns.forEach((fn) => fn());
-      this._onDoneFns = [];
-    }
-  }
-  init() {
-    this.players.forEach((player) => player.init());
-  }
-  onStart(fn) {
-    this._onStartFns.push(fn);
-  }
-  _onStart() {
-    if (!this.hasStarted()) {
-      this._started = true;
-      this._onStartFns.forEach((fn) => fn());
-      this._onStartFns = [];
-    }
-  }
-  onDone(fn) {
-    this._onDoneFns.push(fn);
-  }
-  onDestroy(fn) {
-    this._onDestroyFns.push(fn);
-  }
-  hasStarted() {
-    return this._started;
-  }
-  play() {
-    if (!this.parentPlayer) {
-      this.init();
-    }
-    this._onStart();
-    this.players.forEach((player) => player.play());
-  }
-  pause() {
-    this.players.forEach((player) => player.pause());
-  }
-  restart() {
-    this.players.forEach((player) => player.restart());
-  }
-  finish() {
-    this._onFinish();
-    this.players.forEach((player) => player.finish());
-  }
-  destroy() {
-    this._onDestroy();
-  }
-  _onDestroy() {
-    if (!this._destroyed) {
-      this._destroyed = true;
-      this._onFinish();
-      this.players.forEach((player) => player.destroy());
-      this._onDestroyFns.forEach((fn) => fn());
-      this._onDestroyFns = [];
-    }
-  }
-  reset() {
-    this.players.forEach((player) => player.reset());
-    this._destroyed = false;
-    this._finished = false;
-    this._started = false;
-  }
-  setPosition(p) {
-    const timeAtPosition = p * this.totalTime;
-    this.players.forEach((player) => {
-      const position = player.totalTime ? Math.min(1, timeAtPosition / player.totalTime) : 1;
-      player.setPosition(position);
-    });
-  }
-  getPosition() {
-    const longestPlayer = this.players.reduce((longestSoFar, player) => {
-      const newPlayerIsLongest = longestSoFar === null || player.totalTime > longestSoFar.totalTime;
-      return newPlayerIsLongest ? player : longestSoFar;
-    }, null);
-    return longestPlayer != null ? longestPlayer.getPosition() : 0;
-  }
-  beforeDestroy() {
-    this.players.forEach((player) => {
-      if (player.beforeDestroy) {
-        player.beforeDestroy();
-      }
-    });
-  }
-  /** @internal */
-  triggerCallback(phaseName) {
-    const methods = phaseName == "start" ? this._onStartFns : this._onDoneFns;
-    methods.forEach((fn) => fn());
-    methods.length = 0;
-  }
-};
-var ɵPRE_STYLE = "!";
 
 // node_modules/@angular/animations/fesm2022/browser.mjs
 var LINE_START = "\n - ";
@@ -498,14 +97,6 @@ function invalidExpression(expr) {
 }
 function invalidTransitionAlias(alias) {
   return new RuntimeError(3016, ngDevMode && `The transition alias value "${alias}" is not supported`);
-}
-function validationFailed(errors) {
-  return new RuntimeError(3500, ngDevMode && `animation validation failed:
-${errors.map((err) => err.message).join("\n")}`);
-}
-function buildingFailed(errors) {
-  return new RuntimeError(3501, ngDevMode && `animation building failed:
-${errors.map((err) => err.message).join("\n")}`);
 }
 function triggerBuildFailed(name, errors) {
   return new RuntimeError(3404, ngDevMode && `The animation trigger "${name}" has failed to build due to the following errors:
@@ -756,14 +347,6 @@ var AnimationDriver = class {
 };
 var AnimationStyleNormalizer = class {
 };
-var NoopAnimationStyleNormalizer = class {
-  normalizePropertyName(propertyName, errors) {
-    return propertyName;
-  }
-  normalizeStyleValue(userProvidedProperty, normalizedProperty, value, errors) {
-    return value;
-  }
-};
 var ONE_SECOND = 1e3;
 var SUBSTITUTION_EXPR_START = "{{";
 var SUBSTITUTION_EXPR_END = "}}";
@@ -846,9 +429,6 @@ function normalizeKeyframes(keyframes) {
     return keyframes;
   }
   return keyframes.map((kf) => new Map(Object.entries(kf)));
-}
-function normalizeStyles(styles) {
-  return Array.isArray(styles) ? new Map(...styles) : new Map(styles);
 }
 function setStyles(element, styles, formerStyles) {
   styles.forEach((val, prop) => {
@@ -995,9 +575,6 @@ var WebAnimationsStyleNormalizer = class extends AnimationStyleNormalizer {
 function createListOfWarnings(warnings) {
   const LINE_START2 = "\n - ";
   return `${LINE_START2}${warnings.filter(Boolean).map((warning) => warning).join(LINE_START2)}`;
-}
-function warnValidation(warnings) {
-  console.warn(`animation validation warnings:${createListOfWarnings(warnings)}`);
 }
 function warnTriggerBuild(name, warnings) {
   console.warn(`The animation trigger "${name}" has built with the following warnings:${createListOfWarnings(warnings)}`);
@@ -4211,42 +3788,6 @@ var WebAnimationsDriver = class {
     return new WebAnimationsPlayer(element, _keyframes, playerOptions, specialStyles);
   }
 };
-function createEngine(type, doc) {
-  if (type === "noop") {
-    return new AnimationEngine(doc, new NoopAnimationDriver(), new NoopAnimationStyleNormalizer());
-  }
-  return new AnimationEngine(doc, new WebAnimationsDriver(), new WebAnimationsStyleNormalizer());
-}
-var Animation = class {
-  _driver;
-  _animationAst;
-  constructor(_driver, input) {
-    this._driver = _driver;
-    const errors = [];
-    const warnings = [];
-    const ast = buildAnimationAst(_driver, input, errors, warnings);
-    if (errors.length) {
-      throw validationFailed(errors);
-    }
-    if (typeof ngDevMode === "undefined" || ngDevMode) {
-      if (warnings.length) {
-        warnValidation(warnings);
-      }
-    }
-    this._animationAst = ast;
-  }
-  buildTimelines(element, startingStyles, destinationStyles, options, subInstructions) {
-    const start = Array.isArray(startingStyles) ? normalizeStyles(startingStyles) : startingStyles;
-    const dest = Array.isArray(destinationStyles) ? normalizeStyles(destinationStyles) : destinationStyles;
-    const errors = [];
-    subInstructions = subInstructions || new ElementInstructionMap();
-    const result = buildAnimationTimelines(this._driver, element, this._animationAst, ENTER_CLASSNAME, LEAVE_CLASSNAME, start, dest, options, subInstructions, errors);
-    if (errors.length) {
-      throw buildingFailed(errors);
-    }
-    return result;
-  }
-};
 var ANIMATION_PREFIX = "@";
 var DISABLE_ANIMATIONS_FLAG = "@.disabled";
 var BaseAnimationRenderer = class {
@@ -4497,37 +4038,154 @@ var AnimationRendererFactory = class {
     this.delegate.componentReplaced?.(componentId);
   }
 };
+
+// node_modules/@angular/platform-browser/fesm2022/animations.mjs
+var InjectableAnimationEngine = class _InjectableAnimationEngine extends AnimationEngine {
+  // The `ApplicationRef` is injected here explicitly to force the dependency ordering.
+  // Since the `ApplicationRef` should be created earlier before the `AnimationEngine`, they
+  // both have `ngOnDestroy` hooks and `flush()` must be called after all views are destroyed.
+  constructor(doc, driver, normalizer) {
+    super(doc, driver, normalizer);
+  }
+  ngOnDestroy() {
+    this.flush();
+  }
+  static ɵfac = function InjectableAnimationEngine_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _InjectableAnimationEngine)(ɵɵinject(DOCUMENT), ɵɵinject(AnimationDriver), ɵɵinject(AnimationStyleNormalizer));
+  };
+  static ɵprov = ɵɵdefineInjectable({
+    token: _InjectableAnimationEngine,
+    factory: _InjectableAnimationEngine.ɵfac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InjectableAnimationEngine, [{
+    type: Injectable
+  }], () => [{
+    type: Document,
+    decorators: [{
+      type: Inject,
+      args: [DOCUMENT]
+    }]
+  }, {
+    type: AnimationDriver
+  }, {
+    type: AnimationStyleNormalizer
+  }], null);
+})();
+function instantiateDefaultStyleNormalizer() {
+  return new WebAnimationsStyleNormalizer();
+}
+function instantiateRendererFactory(renderer, engine, zone) {
+  return new AnimationRendererFactory(renderer, engine, zone);
+}
+var SHARED_ANIMATION_PROVIDERS = [{
+  provide: AnimationStyleNormalizer,
+  useFactory: instantiateDefaultStyleNormalizer
+}, {
+  provide: AnimationEngine,
+  useClass: InjectableAnimationEngine
+}, {
+  provide: RendererFactory2,
+  useFactory: instantiateRendererFactory,
+  deps: [DomRendererFactory2, AnimationEngine, NgZone]
+}];
+var BROWSER_ANIMATIONS_PROVIDERS = [{
+  provide: AnimationDriver,
+  useFactory: () => new WebAnimationsDriver()
+}, {
+  provide: ANIMATION_MODULE_TYPE,
+  useValue: "BrowserAnimations"
+}, ...SHARED_ANIMATION_PROVIDERS];
+var BROWSER_NOOP_ANIMATIONS_PROVIDERS = [{
+  provide: AnimationDriver,
+  useClass: NoopAnimationDriver
+}, {
+  provide: ANIMATION_MODULE_TYPE,
+  useValue: "NoopAnimations"
+}, ...SHARED_ANIMATION_PROVIDERS];
+var BrowserAnimationsModule = class _BrowserAnimationsModule {
+  /**
+   * Configures the module based on the specified object.
+   *
+   * @param config Object used to configure the behavior of the `BrowserAnimationsModule`.
+   * @see {@link BrowserAnimationsModuleConfig}
+   *
+   * @usageNotes
+   * When registering the `BrowserAnimationsModule`, you can use the `withConfig`
+   * function as follows:
+   * ```ts
+   * @NgModule({
+   *   imports: [BrowserAnimationsModule.withConfig(config)]
+   * })
+   * class MyNgModule {}
+   * ```
+   */
+  static withConfig(config) {
+    return {
+      ngModule: _BrowserAnimationsModule,
+      providers: config.disableAnimations ? BROWSER_NOOP_ANIMATIONS_PROVIDERS : BROWSER_ANIMATIONS_PROVIDERS
+    };
+  }
+  static ɵfac = function BrowserAnimationsModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _BrowserAnimationsModule)();
+  };
+  static ɵmod = ɵɵdefineNgModule({
+    type: _BrowserAnimationsModule,
+    exports: [BrowserModule]
+  });
+  static ɵinj = ɵɵdefineInjector({
+    providers: BROWSER_ANIMATIONS_PROVIDERS,
+    imports: [BrowserModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(BrowserAnimationsModule, [{
+    type: NgModule,
+    args: [{
+      exports: [BrowserModule],
+      providers: BROWSER_ANIMATIONS_PROVIDERS
+    }]
+  }], null, null);
+})();
+function provideAnimations() {
+  performanceMarkFeature("NgEagerAnimations");
+  return [...BROWSER_ANIMATIONS_PROVIDERS];
+}
+var NoopAnimationsModule = class _NoopAnimationsModule {
+  static ɵfac = function NoopAnimationsModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _NoopAnimationsModule)();
+  };
+  static ɵmod = ɵɵdefineNgModule({
+    type: _NoopAnimationsModule,
+    exports: [BrowserModule]
+  });
+  static ɵinj = ɵɵdefineInjector({
+    providers: BROWSER_NOOP_ANIMATIONS_PROVIDERS,
+    imports: [BrowserModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NoopAnimationsModule, [{
+    type: NgModule,
+    args: [{
+      exports: [BrowserModule],
+      providers: BROWSER_NOOP_ANIMATIONS_PROVIDERS
+    }]
+  }], null, null);
+})();
+function provideNoopAnimations() {
+  return [...BROWSER_NOOP_ANIMATIONS_PROVIDERS];
+}
 export {
-  AnimationDriver,
-  NoopAnimationDriver,
-  Animation as ɵAnimation,
-  AnimationEngine as ɵAnimationEngine,
-  AnimationRenderer as ɵAnimationRenderer,
-  AnimationRendererFactory as ɵAnimationRendererFactory,
-  AnimationStyleNormalizer as ɵAnimationStyleNormalizer,
-  BaseAnimationRenderer as ɵBaseAnimationRenderer,
-  NoopAnimationStyleNormalizer as ɵNoopAnimationStyleNormalizer,
-  WebAnimationsDriver as ɵWebAnimationsDriver,
-  WebAnimationsPlayer as ɵWebAnimationsPlayer,
-  WebAnimationsStyleNormalizer as ɵWebAnimationsStyleNormalizer,
-  allowPreviousPlayerStylesMerge as ɵallowPreviousPlayerStylesMerge,
-  camelCaseToDashCase as ɵcamelCaseToDashCase,
-  containsElement as ɵcontainsElement,
-  createEngine as ɵcreateEngine,
-  getParentElement as ɵgetParentElement,
-  invokeQuery as ɵinvokeQuery,
-  normalizeKeyframes as ɵnormalizeKeyframes,
-  validateStyleProperty as ɵvalidateStyleProperty,
-  validateWebAnimatableStyleProperty as ɵvalidateWebAnimatableStyleProperty
+  ANIMATION_MODULE_TYPE,
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+  provideAnimations,
+  provideNoopAnimations,
+  InjectableAnimationEngine as ɵInjectableAnimationEngine
 };
 /*! Bundled license information:
-
-@angular/animations/fesm2022/animations.mjs:
-  (**
-   * @license Angular v19.1.7
-   * (c) 2010-2024 Google LLC. https://angular.io/
-   * License: MIT
-   *)
 
 @angular/animations/fesm2022/browser.mjs:
   (**
@@ -4535,5 +4193,12 @@ export {
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
+
+@angular/platform-browser/fesm2022/animations.mjs:
+  (**
+   * @license Angular v19.1.7
+   * (c) 2010-2024 Google LLC. https://angular.io/
+   * License: MIT
+   *)
 */
-//# sourceMappingURL=browser-HZHLBEHF.js.map
+//# sourceMappingURL=@angular_platform-browser_animations.js.map

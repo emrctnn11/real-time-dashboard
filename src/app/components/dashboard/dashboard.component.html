@@ -1,4 +1,3 @@
-<h2>📊 Real-Time Data Chart</h2>
 <div class="chart-container">
   <canvas
     baseChart
@@ -8,6 +7,18 @@
     chartType="line"
   >
   </canvas>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Select Cryptocurrency</mat-label>
+    <mat-select
+      [(value)]="selectedCrypto"
+      (selectionChange)="onCryptoChange($event.value)"
+    >
+      <mat-option *ngFor="let crypto of availableCryptos" [value]="crypto">
+        {{ crypto }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <h2>📡 Real-Time Data Stream</h2>
