@@ -40,4 +40,3 @@ Navigate to http://localhost:4200/ to see it in action!
 ```sh
 🔥 **This README is concise, well-structured, and highlights key features!** Would you like to add anything else? 😊🚀
 ```
->>>>>>> develop
